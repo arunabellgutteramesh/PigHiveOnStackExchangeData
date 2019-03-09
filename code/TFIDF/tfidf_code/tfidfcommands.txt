@@ -1,0 +1,72 @@
+/usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.9.0.jar  
+
+hdfs dfs -rm -r  /user/tfidf/tfout* 
+
+hdfs dfs -ls  /user/tfidf/input/
+
+hadoop jar \
+     /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.9.0.jar  \
+     -file /home/vagrant/code/tfidf_code/mapper1.py \
+     -mapper mapper1.py \
+     -file /home/vagrant/code/tfidf_code/reducer1.py \
+     -reducer reducer1.py \
+     -input /user/tfidf/input/39677.txt \
+     -output /user/tfidf/tfoutput1
+
+/usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.9.0.jar -file /home/vagrant/code/tfidf_code/mapper1.py -mapper mapper.py -file /home/hadoop/reducer.py -reducer reducer.py -input my-input/* -output my-output
+
+
+
+  
+hdfs dfs -ls /user/tfidf/tfoutput1
+
+hadoop jar \
+     /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.9.0.jar  \
+     -mapper /home/vagrant/code/tfidf_code/mapper2.py \
+     -reducer /home/vagrant/code/tfidf_code/reducer2.py \
+     -input /user/tfidf/tfoutput1/part-00000 \
+     -output /user/tfidf/tfoutput2 
+
+hdfs dfs -ls /user/tfidf/tfoutput2
+
+hadoop jar \
+     /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.9.0.jar  \
+     -mapper /home/vagrant/code/tfidf_code/mapper3.py \
+     -reducer /home/vagrant/code/tfidf_code/reducer3.py \
+     -input /user/tfidf/tfoutput2/part-00000 \
+     -output /user/tfidf/tfoutput3  
+
+hdfs dfs -ls /user/tfidf/tfoutput3
+
+hadoop jar \
+     /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.9.0.jar  \
+     -numReduceTasks 0 \
+     -mapper /home/vagrant/code/tfidf_code/mapper4.py \
+     -input /user/tfidf/tfoutput3/part-00000 \
+     -output /user/tfidf/tfoutput4  
+
+
+hdfs dfs -ls /user/tfidf/tfoutput4
+
+hdfs dfs -getmerge /user/tfidf/tfoutput4  /home/vagrant/tfidfResults/39677.txt
+
+
+
+
+
+cd code/localpythoncode/
+vi topterm.py
+   
+
+hadoop@ubuntu:/usr/local/hadoop$ bin/hadoop jar contrib/streaming/hadoop-0.20.0-streaming.jar -file /home/hadoop/mapper.py -mapper mapper.py -file /home/hadoop/reducer.py -reducer reducer.py -input my-input/* -output my-output
+
+
+  
+
+
+
+hadoop jar \
+     /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.9.0.jar  \
+     -mapper /home/vagrant/code/dfmapper.py \
+     -reducer /home/vagrant/code/dfreducer.py \
+     -input /tf -output /dfout1   
